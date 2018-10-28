@@ -19,6 +19,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class BringRates {
@@ -73,6 +75,20 @@ public class BringRates {
 			return null;
 		}
 	});
+	
+	
+	}
+	
+	static private String getAttrValue(Node node, String attrName) {
+		if (!node.hasAttributes())
+			return "";
+		NamedNodeMap nmap = node.getAttributes();
+		if (nmap == null)
+			return "";
+		Node n = nmap.getNamedItem(attrName);
+		if (n == null)
+			return "";
+		return n.getNodeValue();
 	}
 
 }
