@@ -6,13 +6,17 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Iterator;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -37,6 +41,38 @@ public class BringRates {
 	DocumentBuilder builder = factory.newDocumentBuilder();
 	Document xmlDoc = builder.parse(new URL("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml").openStream());
 	//clean(xmlDoc);
+	
+	xmlDoc.getDocumentElement().normalize();
+	System.out.println("Root element of the doc is " + xmlDoc.getDocumentElement().getNodeName());
+
+	XPathFactory xfact = XPathFactory.newInstance();
+	XPath xpath = xfact.newXPath();
+	xpath.setNamespaceContext(new NamespaceContext() {
+
+		@Override
+		public Iterator getPrefixes(String arg0) {
+			return null;
+		}
+
+		@Override
+		public String getPrefix(String arg0) {
+			return null;
+		}
+
+		@Override
+		public String getNamespaceURI(String prefix) {
+			switch (prefix) {
+			case "df":
+				return "http://www.ecb.int/vocabulary/2002-08-01/eurofxref";
+			case "gesmes":
+				return "http://www.gesmes.org/xml/2002-08-01";
+			}
+			if ("gesmes".equals(prefix)) {
+				return "http://www.gesmes.org/xml/2002-08-01";
+			}
+			return null;
+		}
+	});
 	}
 
 }
